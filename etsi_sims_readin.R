@@ -2,23 +2,30 @@
 #run all the functions in the master file
 #set the working directory to where the txt files are
 
-setwd("...")
+setwd("C:/Users/rkkno/Documents/University of Texas at Austin/etsi/output files/Setting 1")
 setting <- 1
 
-outputfile=c()
+output.summary=c()
+output.all = c()
 for(u in 1:10) {
-	 outputfile = rbind(outputfile,read.table(paste("etsi.outputfile", setting, "_030724",u,".txt", sep=""), header = T))
+	 output.summary = rbind(output.summary,read.table(paste("etsi.output.summary", setting, "_030724",u,".txt", sep=""), header = T))
+	 output.all = rbind(output.all, read.table(paste("etsi.output.all",setting, "_030724",u,".txt",sep=""), header = T))
 }
 
 each.rows = 3
-results <- matrix(NA, nrow = each.rows, ncol = ncol(outputfile))
+results <- matrix(NA, nrow = each.rows, ncol = ncol(output.summary))
 
 for (i in 1:each.rows) {
   # want idx 1, 4, 7, ..., 28 
   idx <- seq(from = i, to = 10*each.rows, by = each.rows)
-  results[i,] <- colMeans(outputfile[idx,])
+  results[i,] <- colMeans(output.summary[idx,])
 }
 
 results <- as.data.frame(results)
-colnames(results) <- colnames(outputfile)
+colnames(results) <- colnames(output.summary)
+rownames(results) <- rownames(output.summary)[1:3]
 print(results)
+
+output.all
+mean(output.all$se.delta.B.pred.con.boot)
+mean(output.all$se.delta.B.obs)
