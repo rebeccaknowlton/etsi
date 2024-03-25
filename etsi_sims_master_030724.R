@@ -214,10 +214,16 @@ for (i in 1:num.sim) {
   print(end_time-start_time)
 }
 
-# compile and save table 
+# compile and save summary table 
 df <- data.frame("true.delta.B" = rep(get.truth(setting)$delta, 4),
                  "avg.est.delta.B" = c(mean(y.obs.estimates$delta.B), mean(y.pred.separate.estimates$delta.B), mean(y.pred.control.estimates$delta.B), mean(y.pred.control.boot.estimates$delta.B)),
                  "prop.null.reject" = c(sum(abs(y.obs.estimates$z) > 1.96) / num.sim, sum(abs(y.pred.separate.estimates$z) > 1.96) / num.sim, sum(abs(y.pred.control.estimates$z) > 1.96) / num.sim, sum(abs(y.pred.control.boot.estimates$z) > 1.96) / num.sim))
 df <- t(df) 
 colnames(df) <- c("observed.y", "predict.y.separate", "predict.y.control", "predict.y.control.boot")
-write.table(df, paste("etsi.outputfile",setting, "_030724",parallel.num,".txt",sep=""), quote = FALSE, row.names = TRUE)
+write.table(df, paste("etsi.output.summary",setting, "_030724",parallel.num,".txt",sep=""), quote = FALSE, row.names = TRUE)
+
+# more detailed output table for troubleshooting
+est.results <- cbind(y.obs.estimates, y.pred.separate.estimates, y.pred.control.estimates, y.pred.control.boot.estimates)
+colnames(est.results) <- c("delta.B.obs","se.delta.B.obs","z.obs","delta.B.pred.sep","se.delta.B.pred.sep","z.pred.sep","delta.B.pred.con","se.delta.B.pred.con","z.pred.con","delta.B.pred.con.boot","se.delta.B.pred.con.boot","z.pred.con.boot")
+write.table(est.results, paste("etsi.output.all",setting, "_030724",parallel.num,".txt",sep=""), quote = FALSE, row.names = FALSE)
+
