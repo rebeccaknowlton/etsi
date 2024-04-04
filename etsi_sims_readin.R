@@ -8,8 +8,8 @@ setting <- 1
 output.summary=c()
 output.all = c()
 for(u in 1:10) {
-	 output.summary = rbind(output.summary,read.table(paste("etsi.output.summary", setting, "_030724",u,".txt", sep=""), header = T))
-	 output.all = rbind(output.all, read.table(paste("etsi.output.all",setting, "_030724",u,".txt",sep=""), header = T))
+	 output.summary = rbind(output.summary,read.table(paste("etsi.output.summary", setting, "_032824",u,".txt", sep=""), header = T))
+	 output.all = rbind(output.all, read.table(paste("etsi.output.all",setting, "_032824",u,".txt",sep=""), header = T))
 }
 
 each.rows = 3
@@ -27,5 +27,4 @@ rownames(results) <- rownames(output.summary)[1:3]
 print(results)
 
 output.all
-mean(output.all$se.delta.B.pred.con.boot)
-mean(output.all$se.delta.B.obs)
+
