@@ -1,0 +1,3 @@
+importFrom(stats, bw.nrd, var, dnorm, qnorm, pnorm)
+importFrom(hetsurr, hetsurr.fun)
+export("etsi.main", "etsi.design")

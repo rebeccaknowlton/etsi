@@ -1,0 +1,10 @@
+Package: etsi
+Type: Package
+Title: Efficient Testing Using Surrogate Information
+Version: 1.0
+Date: 2024-11-04
+Author: Rebecca Knowlton
+Maintainer: Rebecca Knowlton <rknowlton@utexas.edu>
+Description: Provides functions for treatment effect estimation, hypothesis testing, and future study design for settings where the surrogate is used in place of the primary outcome for individuals for whom the surrogate is valid, and the primary outcome is purposefully measured in the remaining patients. More details will be available in the future in: Knowlton, R., Parast, L. (2024) ``Efficient Testing Using Surrogate Information."
+License: GPL
+Imports: hetsurr, stats
