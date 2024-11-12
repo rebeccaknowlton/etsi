@@ -1,5 +1,5 @@
 etsi.design <-
-function(Study.A, n.b0 = NULL, n.b1 = NULL, psi = NULL, pi.b = NULL, kappa = NULL,
+function(Study.A, n.b0 = NULL, n.b1 = NULL, psi = NULL, w.range = NULL, kappa = NULL,
                         desired.power = NULL, iterations = 100) {
   
   # Check if Study.A is a dataframe
@@ -25,6 +25,20 @@ function(Study.A, n.b0 = NULL, n.b1 = NULL, psi = NULL, pi.b = NULL, kappa = NUL
     stop("Please specify only one of 'desired.power' or both 'n.b0' and 'n.b1,' not both.")
   }
   
+  # if w.range provided, subset Study.A to match
+  if(!is.null(w.range)) {Study.A = Study.A[Study.A$W >= w.range[1] & Study.A$W <= w.range[2] ,]}
+  
+  # If delta column not present in Study.A, create it based on kappa
+  if (!("delta" %in% colnames(Study.A))) {
+    PTE.results <- hetsurr::hetsurr.fun(y1 = Study.A$Y[Study.A$A==1],
+                                        y0 = Study.A$Y[Study.A$A==0], 
+                                        s1 = Study.A$S[Study.A$A==1], 
+                                        s0 = Study.A$S[Study.A$A==0], 
+                                        w1 = Study.A$W[Study.A$A==1], 
+                                        w0 = Study.A$W[Study.A$A==0])
+    Study.A$delta <- check.strong.surr(Study.A, kappa, PTE.results)
+  }
+  
   # Generalized Cross-Validation
   holdout <- 0.5
   results <- rep(NA, iterations)
@@ -35,22 +49,8 @@ function(Study.A, n.b0 = NULL, n.b1 = NULL, psi = NULL, pi.b = NULL, kappa = NUL
     Study.A.train <- Study.A[train.index, ]
     Study.A.test <- Study.A[-train.index, ]
     
-    # If delta column not present in Study.A, create it based on kappa
-    if (!("delta" %in% colnames(Study.A))) {
-      PTE.results <- hetsurr::hetsurr.fun(y1 = Study.A.train$Y[Study.A.train$A==1],
-                                          y0 = Study.A.train$Y[Study.A.train$A==0], 
-                                          s1 = Study.A.train$S[Study.A.train$A==1], 
-                                          s0 = Study.A.train$S[Study.A.train$A==0], 
-                                          w1 = Study.A.train$W[Study.A.train$A==1], 
-                                          w0 = Study.A.train$W[Study.A.train$A==0])
-      Study.A.test$delta <- check.strong.surr(Study.A.test, kappa, PTE.results)
-      Study.A.train$delta <- check.strong.surr(Study.A.train, kappa, PTE.results)
-    }
-    
-    # Estimate pi from Study.A if user doesn't specify
-    if(is.null(pi.b)) {
-      pi.b <- sum(Study.A.test$delta) / length(Study.A.test$delta)
-    }
+    # Estimate pi from Study.A
+    pi.b <- sum(Study.A.test$delta) / length(Study.A.test$delta)
     
     # Partition test set based on surrogate strength
     y1.weak <- Study.A.test$Y[(Study.A.test$A == 1) & (Study.A.test$delta == 0)]
@@ -85,26 +85,26 @@ function(Study.A, n.b0 = NULL, n.b1 = NULL, psi = NULL, pi.b = NULL, kappa = NUL
       }
     }
     
-    mu1w <- mean(y1.weak)
-    mu1s <- mean(y1.strong)
-    mu0w <- mean(y0.weak)
-    mu0s <- mean(y0.strong)
+    n1w <- length(y1.weak)
+    n1s <- length(y1.strong)
+    n0w <- length(y0.weak)
+    n0s <- length(y0.strong)
     
-    s1.2 <- var(y1.weak)
-    s2.2 <- var(y1.strong)
-    s3.2 <- var(y0.weak)
-    s4.2 <- var(y0.strong)
+    # Set empirical means and variances as 0, then fill in for nonempty groups
+    mu1w <- 0; mu1s <- 0; mu0w <- 0; mu0s <- 0
+    s1.2 <- 0; s2.2 <- 0; s3.2 <- 0; s4.2 <- 0
+    if(n1w > 0) {mu1w <- mean(y1.weak); s1.2 <- var(y1.weak)}
+    if(n1s > 0) {mu1s <- mean(y1.strong); s2.2 <- var(y1.strong)}
+    if(n0w > 0) {mu0w <- mean(y0.weak); s3.2 <- var(y0.weak)}
+    if(n0s > 0) {mu0s <- mean(y0.strong); s4.2 <- var(y0.strong)}
     
-    # make corrections for n = 0 or n = 1 groups so power won't return NA
+    # Make corrections for n = 1 groups so empirical vars won't be NA
     if(is.na(s1.2)) {s1.2 <- 0}
     if(is.na(s2.2)) {s2.2 <- 0}
     if(is.na(s3.2)) {s3.2 <- 0}
     if(is.na(s4.2)) {s4.2 <- 0}
-    if(is.na(mu1w)) {mu1w <- 0}
-    if(is.na(mu1s)) {mu1s <- 0}
-    if(is.na(mu0w)) {mu0w <- 0}
-    if(is.na(mu0s)) {mu0s <- 0}
     
+    # Calculate desired output
     if (is.null(desired.power)) {
       power <-  1 - pnorm(1.96 - ((1-pi.b)*delta.weak + pi.b*delta.strong) / (sqrt((1/n.b1) * ((1-pi.b)*s1.2 + pi.b*s2.2 + pi.b*(1-pi.b)*(mu1w - mu1s)^2) + (1/n.b0)*((1-pi.b)*s3.2 + pi.b*s4.2 + pi.b*(1-pi.b)*(mu0w-mu0s)^2))))
       results[i] <- power
