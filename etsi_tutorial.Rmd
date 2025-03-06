@@ -7,7 +7,7 @@ output:
 ```{r global_options, echo=FALSE}
 knitr::opts_chunk$set(fig.width=7, warning=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60))
 ```
-We will go through an example using the main functions in the **etsi** R package. First, load the package from github with the code below. If you have never installed the package devtools, you will need to do that; see the commented out code below.
+We will go through an example using the main functions in the **etsi** R package. If you are viewing the html version of this tutorial, you can find the R markdown file here: <https://github.com/rebeccaknowlton/etsi>, it is file called etsi_tutorial.Rmd. First, load the package from github with the code below. If you have never installed the package devtools, you will need to do that; see the commented out code below.
 
 ```{r results = "hide", message=FALSE}
 #install.packages("devtools")
@@ -91,6 +91,41 @@ The required sample size per group is 655. As is true with the **etsi.main** fun
 set.seed(5)
 etsi.design(Study.A = exampledataA.nodelta, desired.power=0.90, kappa = 0.5)
 ```
+It is possible to use these calculations to inform design decisions for Study B. For example, suppose that we would like to take a look at expected power across a range of potential sample sizes from 200 per group to 800 per group, and we are considering various **kappa** thresholds. We can use the function to calculate the exected power at these various options and visualize the results as shown below.
+
+```{r}
+n.vec <- c(200,400,600,800)
+kappa.vec <- c(0.5, 0.6, 0.7)
+options <- expand.grid(n.vec, kappa.vec)
+colnames(options) <- c("n","kappa")
+
+power.res <- rep(NA, nrow(options))
+for (i in 1:nrow(options)) {
+  n <- options[i,1]
+  kappa <- options[i,2]
+  set.seed(1) 
+  power.res[i] <- etsi.design(exampledataA.nodelta, n.b0 = n, n.b1 = n,  kappa = kappa)$power 
+}
+
+results.df <- data.frame("sample.size" = options[,1], 
+                         "kappa" = options[,2],
+                         "power" = power.res)
+
+# plot 
+library(ggplot2)
+# Plot sample size vs power with colors for different kappa
+ggplot(results.df, aes(x = power, y = sample.size, color = factor(kappa))) +
+  geom_line(size = 0.9) +
+  geom_point() +
+  labs(
+    x = "Power",
+    y = "Sample Size Per Group",
+    color = "Kappa") +
+  theme_minimal() +
+  theme(legend.position = "right") 
+
+```
+
 At this time, this package can only handle a single baseline covariate, W, per observation. That's all for now!
 
 ---------
