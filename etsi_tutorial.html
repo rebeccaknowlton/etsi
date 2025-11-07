@@ -357,12 +357,9 @@ package</h1>
 <p>We will go through an example using the main functions in the
 <strong>etsi</strong> R package. If you are viewing the html version of
 this tutorial, you can find the R markdown file here: <a href="https://github.com/rebeccaknowlton/etsi" class="uri">https://github.com/rebeccaknowlton/etsi</a>, it is file
-called etsi_tutorial.Rmd. First, load the package from github with the
-code below. If you have never installed the package devtools, you will
-need to do that; see the commented out code below.</p>
-<pre class="r"><code># install.packages(&#39;devtools&#39;)
-library(devtools)
-devtools::install_github(&quot;https://github.com/rebeccaknowlton/etsi&quot;)
+called etsi_tutorial.Rmd. First, install the package from CRAN, and load
+the package.</p>
+<pre class="r"><code># install.packages(&#39;etsi&#39;)
 library(etsi)</code></pre>
 <p>This package provides provides functions for treatment effect
 estimation, hypothesis testing, and future study design for settings
@@ -370,7 +367,8 @@ where the surrogate is used in place of the primary outcome for
 individuals for whom the surrogate is valid, and the primary outcome is
 purposefully measured in the remaining patients. More details will be
 available in the future in: Knowlton R. and Parast L. (2025) ``Efficient
-Testing Using Surrogate Information (ETSI).” (Under Review)</p>
+Testing Using Surrogate Information (ETSI).” Biometrical Journal, 67(6):
+e70086.</p>
 <p>This package is designed for the following setting. There is some
 prior study that has been conducted, referred to as Study A, and in this
 study, one has identified that a surrogate marker, <span class="math inline">\(S\)</span>, is a strong surrogate marker for a
