@@ -15,8 +15,9 @@ library(etsi)
 
 ```
 
-This package provides provides functions for treatment effect estimation, hypothesis testing, and future study design for settings where the surrogate is used in place of the primary outcome for individuals for whom the surrogate is valid, and the primary outcome is purposefully measured in the remaining patients. More details will be available in the future in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using Surrogate Information (ETSI)." Biometrical Journal, 67(6): e70086.
+This package provides provides functions for treatment effect estimation, hypothesis testing, and future study design for settings where the surrogate is used in place of the primary outcome for individuals for whom the surrogate is valid, and the primary outcome is purposefully measured in the remaining patients. More details are available in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using Surrogate Information (ETSI)." Biometrical Journal, 67(6): e70086.
 
+## Setting
 This package is designed for the following setting. There is some prior study that has been conducted, referred to as Study A, and in this study, one has identified that a surrogate marker, $S$, is a strong surrogate marker for a primary outcome $Y$, for a certain subgroup of individuals with certain baseline covariates, $W \in \Omega_W$. The surrogate $S$ is not a strong surrogate for the remaining individuals with $W \in \Omega_W^C$. We now have a subsequent trial, referred to as Study B, where only $S$ has been measured for those with $W \in \Omega_W$ and only $Y$ has been measured for those in $W \in \Omega_W^C$. We wish to test for a treatment effect in Study B combining $S$ and $Y$ measurements, borrowing information about the surrogacy of $S$ from Study A. 
 
 The package contains example data for illustration, called **exampledataA** and **exampldataB** which represent Study A and Study B, respectively. Each dataset has the following variables: $A$ which is the randomized treatment indicator with 1 for treatment and 0 for control; $W$, the baseline covariate, $S$, the surrogate marker; $Y$, the primary outcome; delta, an indicator where 1 means $W\in\Omega_W$ and 0 means $W\in\Omega_W^C$. 
@@ -40,6 +41,8 @@ exampledataB.actual[1:10,]
 
 
 Often, delta for Study A and B will be provided externally using the user's choice of method to examine surrogate heterogeneity. However, below, we illustrate one option for defining delta, after demonstrating the main function.
+
+## Testing the treatment effect
 
 The main function is **etsi.main** which estimates the ESTI treatment effect i.e., the pooled treatment effect quantity in Study B, using the surrogate information learned from Study A, the corresponding estimated standard error, and the p-value for testing the null hypothesis of a treatment effect equal to 0. The arguments are **Study.A** for Study A data, **Study.B** for Study B data, and an optional **kappa** argument which is not needed if each individual already has a delta provided in the data. 
 
@@ -70,6 +73,8 @@ etsi.main(Study.A = exampledataA.nodelta, Study.B = exampledataB.nodelta, kappa 
 ```
 
 The estimated ETSI treatment effect in Study B with this threshold is 2.97 with standard error 0.714 and the corresponding test rejects the null hypothesis of no treatment effect (p<0.001).
+
+## Designing a future study
 
 The second main function of the **etsi** package is **etsi.design** which provides information to design a future Study B given data from Study A. Assuming the ESTI testing procedure will be used in Study B, the function calculates either the estimated power for Study B, or the required sample size in each treatment group to achieve a desired level of power in Study B, depending on the inputs. In the code below, we give Study A data and specify a sample size of 400 for the control group in Study B and 500 for the treatment group in Study B. 
 

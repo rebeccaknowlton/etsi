@@ -365,10 +365,11 @@ library(etsi)</code></pre>
 estimation, hypothesis testing, and future study design for settings
 where the surrogate is used in place of the primary outcome for
 individuals for whom the surrogate is valid, and the primary outcome is
-purposefully measured in the remaining patients. More details will be
-available in the future in: Knowlton R. and Parast L. (2025) ``Efficient
-Testing Using Surrogate Information (ETSI).” Biometrical Journal, 67(6):
-e70086.</p>
+purposefully measured in the remaining patients. More details are
+available in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using
+Surrogate Information (ETSI).” Biometrical Journal, 67(6): e70086.</p>
+<div id="setting" class="section level2">
+<h2>Setting</h2>
 <p>This package is designed for the following setting. There is some
 prior study that has been conducted, referred to as Study A, and in this
 study, one has identified that a surrogate marker, <span class="math inline">\(S\)</span>, is a strong surrogate marker for a
@@ -445,6 +446,9 @@ exampledataB.actual[1:10, ]</code></pre>
 user’s choice of method to examine surrogate heterogeneity. However,
 below, we illustrate one option for defining delta, after demonstrating
 the main function.</p>
+</div>
+<div id="testing-the-treatment-effect" class="section level2">
+<h2>Testing the treatment effect</h2>
 <p>The main function is <strong>etsi.main</strong> which estimates the
 ESTI treatment effect i.e., the pooled treatment effect quantity in
 Study B, using the surrogate information learned from Study A, the
@@ -533,6 +537,9 @@ value.</p>
 <p>The estimated ETSI treatment effect in Study B with this threshold is
 2.97 with standard error 0.714 and the corresponding test rejects the
 null hypothesis of no treatment effect (p&lt;0.001).</p>
+</div>
+<div id="designing-a-future-study" class="section level2">
+<h2>Designing a future study</h2>
 <p>The second main function of the <strong>etsi</strong> package is
 <strong>etsi.design</strong> which provides information to design a
 future Study B given data from Study A. Assuming the ESTI testing
@@ -602,6 +609,7 @@ ggplot(results.df, aes(x = power, y = sample.size, color = factor(kappa))) +
 <p>At this time, this package can only handle a single baseline
 covariate, W, per observation. That’s all for now!</p>
 <hr />
+</div>
 
 
 
