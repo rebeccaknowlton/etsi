@@ -8,4 +8,4 @@
 
 More details are available in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using Surrogate Information." Biometrical Journal, 67(6): e70086 [doi:10.1002/bimj.70086](https://doi.org/10.1002/bimj.70086).
 
-Go here to view a tutorial for this package: [etsi Tutorial](https://htmlpreview.github.io/?https://github.com/rebeccaknowlton/etsi/blob/main/etsi_tutorial.html)  
+Go here to view a tutorial for this package: [etsi Tutorial](https://htmlpreview.github.io/?https://github.com/rebeccaknowlton/etsi/blob/main/etsi_tutorial.html). We also have a shiny app implementing these methods [here](https://parastlab.shinyapps.io/etsiApp/). 
