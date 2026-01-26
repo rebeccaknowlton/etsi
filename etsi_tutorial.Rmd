@@ -15,7 +15,7 @@ library(etsi)
 
 ```
 
-This package provides provides functions for treatment effect estimation, hypothesis testing, and future study design for settings where the surrogate is used in place of the primary outcome for individuals for whom the surrogate is valid, and the primary outcome is purposefully measured in the remaining patients. More details are available in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using Surrogate Information (ETSI)." Biometrical Journal, 67(6): e70086.
+This package provides functions for treatment effect estimation, hypothesis testing, and future study design for settings where the surrogate is used in place of the primary outcome for individuals for whom the surrogate is valid, and the primary outcome is purposefully measured in the remaining patients. More details are available in: Knowlton R. and Parast L. (2025) ``Efficient Testing Using Surrogate Information (ETSI)." Biometrical Journal, 67(6): e70086.
 
 ## Setting
 This package is designed for the following setting. There is some prior study that has been conducted, referred to as Study A, and in this study, one has identified that a surrogate marker, $S$, is a strong surrogate marker for a primary outcome $Y$, for a certain subgroup of individuals with certain baseline covariates, $W \in \Omega_W$. The surrogate $S$ is not a strong surrogate for the remaining individuals with $W \in \Omega_W^C$. We now have a subsequent trial, referred to as Study B, where only $S$ has been measured for those with $W \in \Omega_W$ and only $Y$ has been measured for those in $W \in \Omega_W^C$. We wish to test for a treatment effect in Study B combining $S$ and $Y$ measurements, borrowing information about the surrogacy of $S$ from Study A. 
