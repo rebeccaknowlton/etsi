@@ -20,8 +20,8 @@ This package provides functions for treatment effect estimation, hypothesis test
 ## Setting
 This package is designed for the following setting. There is some prior study that has been conducted, referred to as Study A, and in this study, one has identified that a surrogate marker, $S$, is a strong surrogate marker for a primary outcome $Y$, for a certain subgroup of individuals with certain baseline covariates, $W \in \Omega_W$. The surrogate $S$ is not a strong surrogate for the remaining individuals with $W \in \Omega_W^C$. We now have a subsequent trial, referred to as Study B, where only $S$ has been measured for those with $W \in \Omega_W$ and only $Y$ has been measured for those in $W \in \Omega_W^C$. We wish to test for a treatment effect in Study B combining $S$ and $Y$ measurements, borrowing information about the surrogacy of $S$ from Study A. 
 
-The package contains example data for illustration, called **exampledataA** and **exampldataB** which represent Study A and Study B, respectively. Each dataset has the following variables: $A$ which is the randomized treatment indicator with 1 for treatment and 0 for control; $W$, the baseline covariate, $S$, the surrogate marker; $Y$, the primary outcome; delta, an indicator where 1 means $W\in\Omega_W$ and 0 means $W\in\Omega_W^C$. 
-Let's take look at these datasets:
+The package contains example data for illustration, called **exampledataA** and **exampledataB** which represent Study A and Study B, respectively. Each dataset has the following variables: $A$ which is the randomized treatment indicator with 1 for treatment and 0 for control; $W$, the baseline covariate, $S$, the surrogate marker; $Y$, the primary outcome; delta, an indicator where 1 means $W\in\Omega_W$ and 0 means $W\in\Omega_W^C$. 
+Let's take a look at these datasets:
 
 ```{r}
 data(exampledataA)
@@ -29,7 +29,7 @@ data(exampledataB)
 exampledataA[1:10,]
 exampledataB[1:10,]
 ```
-In practice, Study A has complete data on all variables while Study B has $W,A,$ and delta for every individual, but only has non-missing $Y$ if $delta=0$ and only has non-missing $S$ if $delta=1$. In this package, Study B data has $Y$ and $S$ for everyone so that a user can compare to existing estimates that use either $Y$ for everyone (costly) or $S$ for everyone (inappropriate because $S$ is not a valid surrogate for everyone). Below, we revise Study B to reflect what we would see in practice:
+In practice, Study A has complete data on all variables while Study B has $W,A,$ and delta for every individual, but only has non-missing $Y$ if delta=0 and only has non-missing $S$ if delta=1. In this package, Study B data has $Y$ and $S$ for everyone so that a user can compare to existing estimates that use either $Y$ for everyone (costly) or $S$ for everyone (inappropriate because $S$ is not a valid surrogate for everyone). Below, we revise Study B to reflect what we would see in practice:
 
 ```{r}
 exampledataB.actual = exampledataB
@@ -44,7 +44,7 @@ Often, delta for Study A and B will be provided externally using the user's choi
 
 ## Testing the treatment effect
 
-The main function is **etsi.main** which estimates the ESTI treatment effect i.e., the pooled treatment effect quantity in Study B, using the surrogate information learned from Study A, the corresponding estimated standard error, and the p-value for testing the null hypothesis of a treatment effect equal to 0. The arguments are **Study.A** for Study A data, **Study.B** for Study B data, and an optional **kappa** argument which is not needed if each individual already has a delta provided in the data. 
+The main function is **etsi.main** which estimates the ETSI treatment effect i.e., the pooled treatment effect quantity in Study B, using the surrogate information learned from Study A, the corresponding estimated standard error, and the p-value for testing the null hypothesis of a treatment effect equal to 0. The arguments are **Study.A** for Study A data, **Study.B** for Study B data, and an optional **kappa** argument which is not needed if each individual already has a delta provided in the data. 
 
 ```{r}
 etsi.main(Study.A = exampledataA, Study.B = exampledataB.actual)
@@ -54,7 +54,7 @@ The estimated ETSI treatment effect in Study B is 2.81 with standard error 0.700
 Now, suppose we did not have delta (removed from the dataset below).
 
 ```{r}
-exampledataA.nodelta = exampledataA[,!names(exampledataB) %in% "delta"]
+exampledataA.nodelta = exampledataA[,!names(exampledataA) %in% "delta"]
 exampledataB.nodelta = exampledataB[,!names(exampledataB) %in% "delta"]
 exampledataA.nodelta[1:10,]
 exampledataB.nodelta[1:10,]
@@ -76,13 +76,13 @@ The estimated ETSI treatment effect in Study B with this threshold is 2.97 with 
 
 ## Designing a future study
 
-The second main function of the **etsi** package is **etsi.design** which provides information to design a future Study B given data from Study A. Assuming the ESTI testing procedure will be used in Study B, the function calculates either the estimated power for Study B, or the required sample size in each treatment group to achieve a desired level of power in Study B, depending on the inputs. In the code below, we give Study A data and specify a sample size of 400 for the control group in Study B and 500 for the treatment group in Study B. 
+The second main function of the **etsi** package is **etsi.design** which provides information to design a future Study B given data from Study A. Assuming the ETSI testing procedure will be used in Study B, the function calculates either the estimated power for Study B, or the required sample size in each treatment group to achieve a desired level of power in Study B, depending on the inputs. In the code below, we give Study A data and specify a sample size of 400 for the control group in Study B and 500 for the treatment group in Study B. 
 
 ```{r}
 set.seed(5)
 etsi.design(Study.A = exampledataA, n.b0 = 400,n.b1 = 500)
 ```
-Because we provided the sample size, the function returns the estimated power which is 0.78. You will notice that a seed is set and that the function takes time to run. This is because generalized cross-validation is used within procedure; the seed is set to ensure reproducibility. Now we illustrate providing the desired power, such that the function returns the required sample size.
+Because we provided the sample size, the function returns the estimated power which is 0.78. You will notice that a seed is set and that the function takes time to run. This is because generalized cross-validation is used within the procedure; the seed is set to ensure reproducibility. Now we illustrate providing the desired power, such that the function returns the required sample size.
 
 ```{r}
 set.seed(5)
@@ -94,7 +94,7 @@ The required sample size per group is 655. As is true with the **etsi.main** fun
 set.seed(5)
 etsi.design(Study.A = exampledataA.nodelta, desired.power=0.90, kappa = 0.5)
 ```
-It is possible to use these calculations to inform design decisions for Study B. For example, suppose that we would like to take a look at expected power across a range of potential sample sizes from 200 per group to 800 per group, and we are considering various **kappa** thresholds. We can use the function to calculate the exected power at these various options and visualize the results as shown below.
+It is possible to use these calculations to inform design decisions for Study B. For example, suppose that we would like to take a look at expected power across a range of potential sample sizes from 200 per group to 800 per group, and we are considering various **kappa** thresholds. We can use the function to calculate the expected power at these various options and visualize the results as shown below.
 
 ```{r}
 n.vec <- c(200,400,600,800)

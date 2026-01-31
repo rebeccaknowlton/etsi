@@ -386,13 +386,13 @@ combining <span class="math inline">\(S\)</span> and <span class="math inline">\
 about the surrogacy of <span class="math inline">\(S\)</span> from Study
 A.</p>
 <p>The package contains example data for illustration, called
-<strong>exampledataA</strong> and <strong>exampldataB</strong> which
+<strong>exampledataA</strong> and <strong>exampledataB</strong> which
 represent Study A and Study B, respectively. Each dataset has the
 following variables: <span class="math inline">\(A\)</span> which is the
 randomized treatment indicator with 1 for treatment and 0 for control;
 <span class="math inline">\(W\)</span>, the baseline covariate, <span class="math inline">\(S\)</span>, the surrogate marker; <span class="math inline">\(Y\)</span>, the primary outcome; delta, an
-indicator where 1 means <span class="math inline">\(W\in\Omega_W\)</span> and 0 means <span class="math inline">\(W\in\Omega_W^C\)</span>. Let’s take look at these
-datasets:</p>
+indicator where 1 means <span class="math inline">\(W\in\Omega_W\)</span> and 0 means <span class="math inline">\(W\in\Omega_W^C\)</span>. Let’s take a look at
+these datasets:</p>
 <pre class="r"><code>data(exampledataA)
 data(exampledataB)
 exampledataA[1:10, ]</code></pre>
@@ -421,8 +421,9 @@ exampledataA[1:10, ]</code></pre>
 ## 10 1 4.9581032  5.2183056  1.6712926     0</code></pre>
 <p>In practice, Study A has complete data on all variables while Study B
 has <span class="math inline">\(W,A,\)</span> and delta for every
-individual, but only has non-missing <span class="math inline">\(Y\)</span> if <span class="math inline">\(delta=0\)</span> and only has non-missing <span class="math inline">\(S\)</span> if <span class="math inline">\(delta=1\)</span>. In this package, Study B data
-has <span class="math inline">\(Y\)</span> and <span class="math inline">\(S\)</span> for everyone so that a user can compare
+individual, but only has non-missing <span class="math inline">\(Y\)</span> if delta=0 and only has non-missing
+<span class="math inline">\(S\)</span> if delta=1. In this package,
+Study B data has <span class="math inline">\(Y\)</span> and <span class="math inline">\(S\)</span> for everyone so that a user can compare
 to existing estimates that use either <span class="math inline">\(Y\)</span> for everyone (costly) or <span class="math inline">\(S\)</span> for everyone (inappropriate because
 <span class="math inline">\(S\)</span> is not a valid surrogate for
 everyone). Below, we revise Study B to reflect what we would see in
@@ -450,7 +451,7 @@ the main function.</p>
 <div id="testing-the-treatment-effect" class="section level2">
 <h2>Testing the treatment effect</h2>
 <p>The main function is <strong>etsi.main</strong> which estimates the
-ESTI treatment effect i.e., the pooled treatment effect quantity in
+ETSI treatment effect i.e., the pooled treatment effect quantity in
 Study B, using the surrogate information learned from Study A, the
 corresponding estimated standard error, and the p-value for testing the
 null hypothesis of a treatment effect equal to 0. The arguments are
@@ -472,7 +473,7 @@ error 0.700 and the corresponding test rejects the null hypothesis of no
 treatment effect (p&lt;0.001).</p>
 <p>Now, suppose we did not have delta (removed from the dataset
 below).</p>
-<pre class="r"><code>exampledataA.nodelta = exampledataA[, !names(exampledataB) %in%
+<pre class="r"><code>exampledataA.nodelta = exampledataA[, !names(exampledataA) %in%
     &quot;delta&quot;]
 exampledataB.nodelta = exampledataB[, !names(exampledataB) %in%
     &quot;delta&quot;]
@@ -542,7 +543,7 @@ null hypothesis of no treatment effect (p&lt;0.001).</p>
 <h2>Designing a future study</h2>
 <p>The second main function of the <strong>etsi</strong> package is
 <strong>etsi.design</strong> which provides information to design a
-future Study B given data from Study A. Assuming the ESTI testing
+future Study B given data from Study A. Assuming the ETSI testing
 procedure will be used in Study B, the function calculates either the
 estimated power for Study B, or the required sample size in each
 treatment group to achieve a desired level of power in Study B,
@@ -556,7 +557,7 @@ etsi.design(Study.A = exampledataA, n.b0 = 400, n.b1 = 500)</code></pre>
 <p>Because we provided the sample size, the function returns the
 estimated power which is 0.78. You will notice that a seed is set and
 that the function takes time to run. This is because generalized
-cross-validation is used within procedure; the seed is set to ensure
+cross-validation is used within the procedure; the seed is set to ensure
 reproducibility. Now we illustrate providing the desired power, such
 that the function returns the required sample size.</p>
 <pre class="r"><code>set.seed(5)
@@ -579,7 +580,7 @@ for Study B. For example, suppose that we would like to take a look at
 expected power across a range of potential sample sizes from 200 per
 group to 800 per group, and we are considering various
 <strong>kappa</strong> thresholds. We can use the function to calculate
-the exected power at these various options and visualize the results as
+the expected power at these various options and visualize the results as
 shown below.</p>
 <pre class="r"><code>n.vec &lt;- c(200, 400, 600, 800)
 kappa.vec &lt;- c(0.5, 0.6, 0.7)
